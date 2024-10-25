@@ -25,7 +25,12 @@ class PostsController < ApplicationController
 
     respond_to do |format|
       if @post.save
-        format.turbo_stream { render turbo_stream: turbo_stream.prepend('posts', partial: 'posts/post', locals: {post: @post}) }
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.prepend('posts', partial: 'posts/show_post_link',locals: { post: @post }),
+            turbo_stream.prepend('posts', partial: 'posts/post', locals: { post: @post })
+          ]
+        end
         format.html { redirect_to @post, notice: "Post was successfully created." }
         format.json { render :show, status: :created, location: @post }
       else
